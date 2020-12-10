@@ -1,4 +1,6 @@
-mod robot;
+mod car;
+mod car_control;
+mod direction;
 mod ultrasound;
 mod traits;
 

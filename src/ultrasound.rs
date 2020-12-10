@@ -29,6 +29,9 @@ impl Ultrasound {
 }
 
 impl Sensor for Ultrasound{
+    type OkType = f32;
+    type ErrorType = Error;
+
     fn sense(&self) -> Result<f32, Error> {
         let trigger = match self.trigger.request(LineRequestFlags::OUTPUT, 0, "triggers sensor") {
             Ok(val) => val,

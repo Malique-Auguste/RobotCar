@@ -8,11 +8,13 @@ pub trait Identifiable {
     fn set_id(&mut self, group: char, model: u32, num: u32);
 }
 
+pub trait Robot {
+    
+}
+
 pub trait Sensor { 
     fn sense(&self) -> Result<f32, Error>; 
 }
 
 pub trait Motor {
-    fn forward(&self);
-    fn backward(&self);
 }

@@ -1,22 +1,45 @@
 use crate::traits::*;
 use gpio_cdev::Chip;
 use std::fmt;
+use crate::speed::Speed;
+use crate::direction::Direction;
 
-
-pub struct Car<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug>{
+pub struct Car<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> {
     id: (char, u32, u32),
     chip: Chip,
+
+    speed: Speed,
+    direction: Direction,
+
     sensors: Vec<A>,
     motors: Vec<B>
 }
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Car<A, B>{
+impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Car<A, B> {
     pub fn new(id: (char, u32, u32), chip:Chip, sensors: Vec<A>, motors: Vec<B>) -> Car<A, B> {
-        Car{id: id, chip: chip, sensors: sensors, motors: motors}
+        Car{id: id, chip: chip, speed:Speed::Medium, direction: Direction::None, sensors: sensors, motors: motors}
     }
 }
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Robot for Car<A, B>{}
+impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Vehicle for Car<A, B> {
+    fn change_direction(&mut self, dir: Direction) {
+        self.direction = dir;
+    }
+
+    fn change_speed(&mut self, speed: Speed) {
+        self.speed = speed;
+    }
+
+    fn drive(&self) {
+        unimplemented!();
+    }
+
+    fn stop(&mut self) {
+        self.direction = Direction::Stop;
+    }
+}
+
+impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Smart for Car<A, B>{}
 
 impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Identifiable for Car<A, B> {
     fn get_id(&self) -> (char, u32, u32) {

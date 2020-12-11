@@ -45,12 +45,12 @@ impl Identifiable for CarController {
 
 impl fmt::Display for CarController  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self.get_id())
+        write!(f, "{:?}: {}, {}", self.get_id(), self.last_direction, self.last_direction)
     }
 }
 
 impl fmt::Debug for CarController  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} :\n{},\n{}", self.get_id(), self.last_direction, self.current_direction)
+        write!(f, "{:?}\nLast Direction: {:?},\nCurrent Direction: {:?}", self.get_id(), self.last_direction, self.current_direction)
     }
 }

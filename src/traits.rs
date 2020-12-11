@@ -1,3 +1,6 @@
+use crate::speed::Speed;
+use crate::direction::Direction;
+
 pub trait Identifiable {
     //the character is the group example: motor, sensor, robot
     //1st number is the model
@@ -6,7 +9,14 @@ pub trait Identifiable {
     fn set_id(&mut self, group: char, model: u32, num: u32);
 }
 
-pub trait Robot {  
+pub trait Vehicle {
+    fn change_direction(&mut self, dir: Direction);
+    fn change_speed(&mut self, speed: Speed);
+    fn drive(&self);
+    fn stop(&mut self);
+}
+
+pub trait Smart {  
 }
 
 pub trait Controller {

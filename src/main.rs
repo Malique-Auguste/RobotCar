@@ -1,7 +1,7 @@
 mod car;
 mod car_control;
 mod direction;
-mod speed;
+mod dc_motor;
 mod ultrasound;
 mod traits;
 
@@ -14,7 +14,7 @@ use gpio_cdev::{Chip};
 
 fn main() {
     println!("Hello, world!");
-    let mut rc = CarController::new('c', 1, 1);
+    let mut rc = CarController::new();
     println!("\n{:?}", rc);
     rc.set_signal();
     println!("\n{:?}", rc.get_signal());

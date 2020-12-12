@@ -1,19 +1,18 @@
 use gpio_cdev::{Chip, Line, LineRequestFlags, LineHandle, Error};
 use std::{thread, time, fmt};
-use crate::traits::{Identifiable, Sensor};
+use crate::traits::Sensor;
 
 const TRIGGER_DURATION: time::Duration = time::Duration::from_nanos(1);
 const HALF_SPEED_OF_SOUND:f32 = 17150.0;
 
 #[derive(Clone)]
 pub struct Ultrasound {
-    id: (char, u32, u32),
     trigger: Line,
     echo: Line
 }
 
 impl Ultrasound {
-    pub fn new(id: (char, u32, u32), chip: &mut Chip, trigger_num: u32, echo_num: u32) -> Result<Ultrasound, gpio_cdev::Error> {
+    pub fn new(chip: &mut Chip, trigger_num: u32, echo_num: u32) -> Result<Ultrasound, Error> {
         let trigger = match chip.get_line(trigger_num){
             Ok(val) => val,
             Err(e) => return Err(e),
@@ -24,7 +23,7 @@ impl Ultrasound {
             Err(e) => return Err(e),
         };
 
-        Ok(Ultrasound{id: id, trigger: trigger, echo: echo})
+        Ok(Ultrasound{trigger: trigger, echo: echo})
     }
 }
 
@@ -78,24 +77,8 @@ impl Sensor for Ultrasound{
     }
 }
 
-impl Identifiable for Ultrasound {
-    fn get_id(&self) -> (char, u32, u32) {
-        self.id
-    }
-    
-    fn set_id(&mut self, group: char, model: u32, num: u32) {
-        self.id = (group, model, num);
-    }
-}
-
-impl fmt::Display for Ultrasound  {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self.get_id())
-    }
-}
-
 impl fmt::Debug for Ultrasound  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} :\n{:?},\n{:?}", self.get_id(), self.trigger, self.echo)
+        write!(f, "Trigger: {:?}\nEcho: {:?}", self.trigger, self.echo)
     }
 }

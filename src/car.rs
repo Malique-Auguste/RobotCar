@@ -1,14 +1,12 @@
 use crate::traits::*;
 use gpio_cdev::Chip;
 use std::fmt;
-use crate::speed::Speed;
 use crate::direction::Direction;
 
 pub struct Car<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> {
     id: (char, u32, u32),
     chip: Chip,
 
-    speed: Speed,
     direction: Direction,
 
     sensors: Vec<A>,
@@ -17,17 +15,13 @@ pub struct Car<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> {
 
 impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Car<A, B> {
     pub fn new(id: (char, u32, u32), chip:Chip, sensors: Vec<A>, motors: Vec<B>) -> Car<A, B> {
-        Car{id: id, chip: chip, speed:Speed::Medium, direction: Direction::None, sensors: sensors, motors: motors}
+        Car{id: id, chip: chip, direction: Direction::None, sensors: sensors, motors: motors}
     }
 }
 
 impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Vehicle for Car<A, B> {
     fn change_direction(&mut self, dir: Direction) {
         self.direction = dir;
-    }
-
-    fn change_speed(&mut self, speed: Speed) {
-        self.speed = speed;
     }
 
     fn drive(&self) {
@@ -41,24 +35,14 @@ impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Vehicle for Car<A, B> {
 
 impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Smart for Car<A, B>{}
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Identifiable for Car<A, B> {
-    fn get_id(&self) -> (char, u32, u32) {
-        self.id
-    }
-
-    fn set_id(&mut self, group: char, model: u32, num: u32) {
-        self.id = (group, model, num);
-    }
-}
-
 impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug>  fmt::Display for Car<A, B>  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} : {:?}, {}, {})", self.get_id(), self.chip, self.sensors.len(), self.motors.len())
+        write!(f, "Chip: {:?} Sensor num: {}, Motor num: {})", self.chip, self.sensors.len(), self.motors.len())
     }
 }
 
 impl<A: Sensor + fmt::Debug, B: Motor + fmt::Debug>  fmt::Debug for Car<A, B>  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} :\n{:?}\n{:?},\n{:?})", self.get_id(), self.chip, self.sensors, self.motors)
+        write!(f, "Chip: {:?}\nSensors: {:?}\nMotors: {:?})", self.chip, self.sensors, self.motors)
     }
 }

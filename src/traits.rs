@@ -1,17 +1,7 @@
-use crate::speed::Speed;
 use crate::direction::Direction;
-
-pub trait Identifiable {
-    //the character is the group example: motor, sensor, robot
-    //1st number is the model
-    //2nd number is the that devices creation number
-    fn get_id(&self) -> (char, u32, u32);
-    fn set_id(&mut self, group: char, model: u32, num: u32);
-}
 
 pub trait Vehicle {
     fn change_direction(&mut self, dir: Direction);
-    fn change_speed(&mut self, speed: Speed);
     fn drive(&self);
     fn stop(&mut self);
 }
@@ -34,4 +24,8 @@ pub trait Sensor {
 }
 
 pub trait Motor {
+    type move_data;
+
+    fn rotate(&self) -> Result<(), gpio_cdev::Error>;
+    fn set_data(&mut self, data: Self::move_data);
 }

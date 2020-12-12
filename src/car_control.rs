@@ -1,17 +1,16 @@
-use crate::traits::{Controller, Identifiable};
+use crate::traits::Controller;
 use crate::direction::Direction;
 use std::io;
 use std::fmt;
 
 pub struct CarController {
-    id: (char, u32, u32),
     last_direction: Direction,
     current_direction: Direction
 }
 
 impl CarController {
-    pub fn new(group: char, model: u32, num: u32) -> CarController {
-        CarController {id: (group, model, num), last_direction: Direction::None, current_direction: Direction::None}
+    pub fn new() -> CarController {
+        CarController {last_direction: Direction::None, current_direction: Direction::None}
     }
 }
 
@@ -33,24 +32,14 @@ impl Controller for CarController {
     }
 }
 
-impl Identifiable for CarController {
-    fn get_id(&self) -> (char, u32, u32) {
-        self.id
-    }
-
-    fn set_id(&mut self, group: char, model: u32, num: u32) {
-        self.id = (group, model, num);
-    }
-}
-
 impl fmt::Display for CarController  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}: {}, {}", self.get_id(), self.last_direction, self.last_direction)
+        write!(f, "Last Direction: {}, Current Direction: {}", self.last_direction, self.last_direction)
     }
 }
 
 impl fmt::Debug for CarController  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}\nLast Direction: {:?},\nCurrent Direction: {:?}", self.get_id(), self.last_direction, self.current_direction)
+        write!(f, "Last Direction: {:?},\nCurrent Direction: {:?}", self.last_direction, self.current_direction)
     }
 }

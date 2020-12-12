@@ -1,4 +1,5 @@
 use gpio_cdev::{Chip, Line, LineRequestFlags, Error};
+use std::fmt;
 use crate::direction::Direction;
 use crate::traits::Motor;
 
@@ -9,7 +10,7 @@ pub struct DCMotor {
 }
 
 impl DCMotor {
-    fn new(chip: &mut Chip, motor1: (u32, u32), motor2: Option<(u32, u32)>) -> Result<DCMotor, Error> {
+    pub fn new(chip: &mut Chip, motor1: (u32, u32), motor2: Option<(u32, u32)>) -> Result<DCMotor, Error> {
         let motor1 = match chip.get_line(motor1.0) {
             Ok(m0) => match chip.get_line(motor1.1) {
                 Ok(m1) => (m0, m1),
@@ -34,19 +35,14 @@ impl DCMotor {
             return Ok(DCMotor{direction:Direction::Forward, motor1: motor1, motor2: None});
         }
     }
-
-    fn is_2_motors(&self) -> bool {
-        match self.motor2 {
-            Some(_) => true,
-            None => false
-        }
-    }
 }
 
 impl Motor for DCMotor {
-    type move_data = Direction;
+    type MoveData = Direction;
 
-    fn rotate(&self) -> Result<(), Error>{
+    fn rotate(&mut self, data: Direction) -> Result<(), Error>{
+        self.direction = data;
+
         if let Direction::None = self.direction { return Ok(()); }
 
         let motor1_0 = match self.motor1.0.request(LineRequestFlags::OUTPUT, 0, "motor 1.0"){
@@ -109,8 +105,20 @@ impl Motor for DCMotor {
         }
         Ok(())
     }
+}
 
-    fn set_data(&mut self, data: Direction) {
-        self.direction = data;
+impl fmt::Display for DCMotor {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self.motor2 {
+            Some(_) => write!(f, "Direction: {}, Is Single Motor", self.direction),
+            None => write!(f, "Direction: {}, Is Duo Motor", self.direction),
+        }
+        
+    }
+}
+
+impl fmt::Debug for DCMotor {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Direction: {:?}, Motor1: {:?}\n Motor2: {:?}", self.direction, self.motor1, self.motor2)
     }
 }

@@ -6,16 +6,26 @@ mod ultrasound;
 mod traits;
 
 
-
-use car_control::CarController;
-use ultrasound::Ultrasound;
+use dc_motor::DCMotor;
+use direction::Direction;
 use traits::*;
 use gpio_cdev::{Chip};
+use std::time;
 
 fn main() {
     println!("Hello, world!");
-    let mut rc = CarController::new();
-    println!("\n{:?}", rc);
-    rc.set_signal();
-    println!("\n{:?}", rc.get_signal());
+    let mut chip = Chip::new("/dev/gpiochip0").unwrap();
+    println!("\n{:?}", chip);
+
+    let mut motor = DCMotor::new(&mut chip, (18, 23), None).unwrap();
+    println!("\nMotor {:?}", motor);
+
+    let t = time::Instant::now();
+    motor.rotate(Direction::Forward);
+
+    while t.elapsed().as_secs_f32() < 5.0 {}
+    motor.rotate(Direction::Backward);
+
+    while t.elapsed().as_secs_f32() < 10.0 {}
+    motor.rotate(Direction::Stop);
 }

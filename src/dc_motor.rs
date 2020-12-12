@@ -47,6 +47,7 @@ impl Motor for DCMotor {
     type move_data = Direction;
 
     fn rotate(&self) -> Result<(), Error>{
+        if let Direction::None = self.direction { return Ok(()); }
 
         let motor1_0 = match self.motor1.0.request(LineRequestFlags::OUTPUT, 0, "motor 1.0"){
             Ok(val) => val,
@@ -66,6 +67,11 @@ impl Motor for DCMotor {
 
             Direction::Backward | Direction::Right => {
                 if let Err(e) = motor1_0.set_value(1) { return Err(e); }
+                if let Err(e) = motor1_1.set_value(0) { return Err(e); }
+            },
+
+            Direction::Stop => {
+                if let Err(e) = motor1_0.set_value(0) { return Err(e); }
                 if let Err(e) = motor1_1.set_value(0) { return Err(e); }
             },
 
@@ -93,7 +99,11 @@ impl Motor for DCMotor {
                     if let Err(e) = motor2_0.set_value(1) { return Err(e); }
                     if let Err(e) = motor2_1.set_value(0) { return Err(e); }
                 },
-    
+                
+                Direction::Stop => {
+                    if let Err(e) = motor1_0.set_value(0) { return Err(e); }
+                    if let Err(e) = motor1_1.set_value(0) { return Err(e); }
+                },
                 _ => unimplemented!()
             }
         }

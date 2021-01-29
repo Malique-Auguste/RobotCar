@@ -2,6 +2,10 @@ use crate::traits::Controller;
 use crate::direction::Direction;
 use std::io;
 use std::fmt;
+use termion::event::Key;
+use termion::input::TermRead;
+use termion::raw::IntoRawMode;
+use std::io::{Write, stdout, stdin};
 
 pub struct CarController {
     last_direction: Direction,
@@ -18,13 +22,13 @@ impl Controller for CarController {
     type SignalType = Direction;
 
     fn set_signal(&mut self) {
-        let mut dir = String::new();
-        match io::stdin().read_line(&mut dir) {
-            Err(_) => return,
-            _ => ()
-        }
+        let stdin = stdin();
+        let mut stdout = stdout().into_raw_mode().unwrap();
 
-        self.current_direction = Direction::from_str(dir.trim());
+        for c in stdin.keys() {
+            self.current_direction = Direction::from(c.unwrap());
+            break
+        }
     }
 
     fn get_signal(&self) -> Direction {

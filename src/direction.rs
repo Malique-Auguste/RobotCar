@@ -1,4 +1,5 @@
 use std::fmt;
+use termion::event::Key;
 
 #[derive(Copy, Clone)]
 pub enum Direction {
@@ -7,33 +8,21 @@ pub enum Direction {
     Left,
     Right,
 
-    ForwardLeft,
-    ForwardRight,
-    BackwardLeft,
-    BackwardRight,
-
     None,
     Stop
 }
 
-impl Direction {
-    pub fn from_str(input: &str) -> Direction {
-        match input {
-            "F" => Direction::Forward,
-            "B" => Direction::Backward,
-            "L" => Direction::Left,
-            "R" => Direction::Right,
 
-            "FR" => Direction::ForwardRight,
-            "FL" => Direction::ForwardLeft,
-            "BR" => Direction::BackwardRight,
-            "BL" => Direction::BackwardLeft,
-            "S" => Direction::Stop,
+impl From<Key> for Direction {
+    fn from(o: Key) -> Direction {
+        match o {
+            Key::Up => Direction::Forward,
+            Key::Down => Direction::Backward,
+            Key::Left => Direction::Left,
+            Key::Right => Direction::Right,
 
-            e => {
-                println!("{} is not a suitable input", e);
-                Direction::None
-            }
+            Key::Backspace => Direction::Stop,
+            _ => Direction::None,
         }
     }
 }
@@ -45,11 +34,6 @@ impl fmt::Display for Direction  {
             Direction::Backward => write!(f, "B"),
             Direction::Left => write!(f, "L"),
             Direction::Right => write!(f, "R"),
-
-            Direction::ForwardLeft => write!(f, "FL"),
-            Direction::ForwardRight => write!(f, "FR"),
-            Direction::BackwardLeft => write!(f, "BL"),
-            Direction::BackwardRight => write!(f, "BR"),
 
             Direction::None => write!(f, "N"),
             Direction::Stop => write!(f, "S")
@@ -64,11 +48,6 @@ impl fmt::Debug for Direction  {
             Direction::Backward => write!(f, "Backward"),
             Direction::Left => write!(f, "Left"),
             Direction::Right => write!(f, "Right"),
-
-            Direction::ForwardLeft => write!(f, "Forward-Left"),
-            Direction::ForwardRight => write!(f, "Forward-Right"),
-            Direction::BackwardLeft => write!(f, "Backward-Left"),
-            Direction::BackwardRight => write!(f, "Backward-Right"),
 
             Direction::None => write!(f, "None"),
             Direction::Stop => write!(f, "Stop")

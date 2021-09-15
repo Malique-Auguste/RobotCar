@@ -14,7 +14,7 @@ pub struct Car {
 
 impl Car {
     pub fn new(chip:Chip, motors: Vec<DCMotor>) -> Car {
-        Car{chip: chip, direction: Direction::None, sensors: sensors, motors: motors}
+        Car{chip: chip, direction: Direction::None, motors: motors}
     }
 }
 
@@ -23,9 +23,9 @@ impl Vehicle for Car {
         self.direction = dir;
     }
 
-    fn drive(&self) {
+    fn drive(&mut self) {
         for motor in self.motors.iter_mut() {
-            motor.rotate(self.direction)
+            motor.rotate(self.direction).unwrap()
         }
     }
 

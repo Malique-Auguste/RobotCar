@@ -2,7 +2,7 @@ use crate::direction::Direction;
 
 pub trait Vehicle {
     fn change_direction(&mut self, dir: Direction);
-    fn drive(&self);
+    fn drive(&mut self);
     fn stop(&mut self);
 }
 
@@ -26,5 +26,5 @@ pub trait Sensor {
 pub trait Motor {
     type MoveData;
 
-    fn rotate(&mut self, data: &Self::MoveData) -> Result<(), gpio_cdev::Error>;
+    fn rotate(&mut self, data: Self::MoveData) -> Result<(), gpio_cdev::Error>;
 }

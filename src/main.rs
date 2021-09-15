@@ -6,7 +6,7 @@ mod dc_motor;
 mod ultrasound;
 mod traits;
 
-/*
+use car::Car;
 use dc_motor::DCMotor;
 use direction::Direction;
 use traits::*;
@@ -15,33 +15,25 @@ use std::time;
 
 
 fn main() {
-    
-    for _ in 0..3 {
     println!("\n\nHello, world!");
     let mut chip = Chip::new("/dev/gpiochip0").unwrap();
     
-    let mut motor = DCMotor::new(&mut chip, (25, 23, 24), None).unwrap();
+    let mut motor = DCMotor::new(&mut chip, (25, 23, 24), Some((11, 9, 10))).unwrap();
     println!("\nMotor {:?}", motor);
 
-    let t = time::Instant::now();
-    println!("\nRotating Forward");
-    println!("{:?}", motor.rotate(Direction::Forward));
+    let mut car = Car::new(chip, vec![motor]);
 
-    while t.elapsed().as_secs_f32() < 3.5 {}
-    println!("Rotating Backward");
-    println!("{:?}", motor.rotate(Direction::Backward));
-
-    while t.elapsed().as_secs_f32() < 7. {}
-    println!("Stopped rotating");
-    println!("{:?}", motor.rotate(Direction::Stop));
-
-    
-    
+    for dir in Direction::iterator() {
+        let t = time::Instant::now();
+        println!("\nRotating {:?}", dir);
+        car.change_direction(*dir);
+        car.drive();
+        while t.elapsed().as_secs_f32() < 3. {}     
+    }
 }
-}
-*/
 
 
+/*
 use car_control::CarController;
 use traits::Controller;
 
@@ -53,3 +45,4 @@ fn main() {
         println!("dir {:?}", cc.get_signal());
     }
 }
+*/

@@ -1,5 +1,6 @@
 use std::fmt;
 use termion::event::Key;
+use std::slice::Iter;
 
 #[derive(Copy, Clone)]
 pub enum Direction {
@@ -12,6 +13,12 @@ pub enum Direction {
     Stop
 }
 
+impl Direction {
+    pub fn iterator() -> Iter<'static, Direction> {
+        static DIRECTIONS: [Direction; 6] = [Direction::Forward, Direction::Backward, Direction::Left, Direction::Right, Direction::None, Direction::Stop];
+        DIRECTIONS.iter()
+    }
+}
 
 impl From<Key> for Direction {
     fn from(o: Key) -> Direction {

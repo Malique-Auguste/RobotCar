@@ -26,5 +26,5 @@ pub trait Sensor {
 pub trait Motor {
     type MoveData;
 
-    fn rotate(&mut self, data:Self::MoveData) -> Result<(), gpio_cdev::Error>;
+    fn rotate(&mut self, data: &Self::MoveData) -> Result<(), gpio_cdev::Error>;
 }

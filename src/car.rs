@@ -2,30 +2,31 @@ use crate::traits::*;
 use gpio_cdev::Chip;
 use std::fmt;
 use crate::direction::Direction;
+use crate::dc_motor::DCMotor;
 
-pub struct Car<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> {
-    id: (char, u32, u32),
+pub struct Car {
     chip: Chip,
 
     direction: Direction,
 
-    sensors: Vec<A>,
-    motors: Vec<B>
+    motors: Vec<DCMotor>
 }
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Car<A, B> {
-    pub fn new(id: (char, u32, u32), chip:Chip, sensors: Vec<A>, motors: Vec<B>) -> Car<A, B> {
-        Car{id: id, chip: chip, direction: Direction::None, sensors: sensors, motors: motors}
+impl Car {
+    pub fn new(chip:Chip, motors: Vec<DCMotor>) -> Car {
+        Car{chip: chip, direction: Direction::None, sensors: sensors, motors: motors}
     }
 }
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Vehicle for Car<A, B> {
+impl Vehicle for Car {
     fn change_direction(&mut self, dir: Direction) {
         self.direction = dir;
     }
 
     fn drive(&self) {
-        unimplemented!();
+        for motor in self.motors.iter_mut() {
+            motor.rotate(self.direction)
+        }
     }
 
     fn stop(&mut self) {
@@ -33,16 +34,16 @@ impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Vehicle for Car<A, B> {
     }
 }
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug> Smart for Car<A, B>{}
+impl Smart for Car{}
 
-impl<A: Sensor + fmt::Debug, B: Motor+ fmt::Debug>  fmt::Display for Car<A, B>  {
+impl  fmt::Display for Car  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Chip: {:?} Sensor num: {}, Motor num: {})", self.chip, self.sensors.len(), self.motors.len())
+        write!(f, "Chip: {:?} Motor num: {})", self.chip, self.motors.len())
     }
 }
 
-impl<A: Sensor + fmt::Debug, B: Motor + fmt::Debug>  fmt::Debug for Car<A, B>  {
+impl  fmt::Debug for Car  {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Chip: {:?}\nSensors: {:?}\nMotors: {:?})", self.chip, self.sensors, self.motors)
+        write!(f, "Chip: {:?}\nMotors: {:?})", self.chip, self.motors)
     }
 }

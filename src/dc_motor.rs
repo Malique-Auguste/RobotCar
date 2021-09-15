@@ -77,7 +77,7 @@ impl DCMotor {
 impl Motor for DCMotor {
     type MoveData = Direction;
 
-    fn rotate(&mut self, data: Direction) -> Result<(), Error>{
+    fn rotate(&mut self, data: &Direction) -> Result<(), Error>{
         self.direction = data;
 
         match self.direction {
